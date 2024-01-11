@@ -1,0 +1,30 @@
+type Query {
+
+    findAllCustomers : [Customer]
+
+    findCustomerById(id : String!) : Customer
+
+
+    findAllPurchaseTransactions  : [PurchaseTransactionProjection]
+
+    findPurchaseTransactionById(id : String!) : PurchaseTransactionProjection
+}
+
+type Customer {
+    id : String
+    fullName : String
+    phoneNumber : String
+    address : String
+    purchaseTransactions : [PurchaseTransaction]
+}
+
+type PurchaseTransaction {
+    id : String
+    paymentType : String
+    amount : Float
+}
+
+type PurchaseTransactionProjection{
+    id : String
+    paymentType : String
+}
