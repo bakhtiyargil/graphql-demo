@@ -1,12 +1,13 @@
 package az.baxtiyargil.graphqldemo.model.entity;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -18,7 +19,6 @@ import lombok.ToString;
 import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDate;
-import java.util.List;
 
 @Entity
 @Getter
@@ -26,8 +26,8 @@ import java.util.List;
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "customer", schema = "graphql")
-public class Customer implements Serializable {
+@Table(name = "student_customer", schema = "graphql")
+public class StudentCustomer implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;
@@ -36,18 +36,17 @@ public class Customer implements Serializable {
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
 
-    private String fullName;
+    private String universityName;
 
-    private String phoneNumber;
-
-    private String address;
+    @Column(name = "student_uuid")
+    private String studentUUID;
 
     private LocalDate createdAt;
 
-    @OneToMany(fetch = FetchType.EAGER)
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "customer_id")
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
-    private List<PurchaseTransaction> purchaseTransactions;
+    private Customer customer;
 
 }
