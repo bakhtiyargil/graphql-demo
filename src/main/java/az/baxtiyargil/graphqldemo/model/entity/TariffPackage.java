@@ -19,6 +19,7 @@ import org.hibernate.proxy.HibernateProxy;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
@@ -45,7 +46,17 @@ public class TariffPackage {
     @OneToMany(mappedBy = "tariffPackage", cascade = {CascadeType.ALL}, fetch = FetchType.LAZY, orphanRemoval = true)
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
-    private Set<Customer> customer;
+    private Set<Customer> customers = new HashSet<>();
+
+    public void addCustomer(Customer customer) {
+        customers.add(customer);
+        customer.setTariffPackage(this);
+    }
+
+    public void removeCustomer(Customer customer) {
+        customers.remove(customer);
+        customer.setTariffPackage(null);
+    }
 
     @Override
     public final boolean equals(Object o) {
