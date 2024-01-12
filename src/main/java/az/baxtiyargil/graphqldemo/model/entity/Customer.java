@@ -6,10 +6,9 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -18,7 +17,6 @@ import lombok.ToString;
 import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDate;
-import java.util.List;
 
 @Entity
 @Getter
@@ -44,10 +42,9 @@ public class Customer implements Serializable {
 
     private LocalDate createdAt;
 
-    @OneToMany(fetch = FetchType.EAGER)
-    @JoinColumn(name = "customer_id")
-    @EqualsAndHashCode.Exclude
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "tariff_package_id")
     @ToString.Exclude
-    private List<PurchaseTransaction> purchaseTransactions;
+    private TariffPackage tariffPackage;
 
 }
