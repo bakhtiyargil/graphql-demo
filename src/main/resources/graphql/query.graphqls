@@ -1,30 +1,49 @@
 type Query {
 
-    findAllCustomers : [Customer]
+    findAllTariffPackages  : [TariffPackage]
+    findTariffPackageById(id : String!) : TariffPackage
 
-    findCustomerById(id : String!) : Customer
+}
 
-
-    findAllPurchaseTransactions  : [PurchaseTransactionProjection]
-
-    findPurchaseTransactionById(id : String!) : PurchaseTransactionProjection
+type TariffPackage {
+    id : String
+    packageType : String
+    commission : Float
+    customers : [Customer]
 }
 
 type Customer {
-    id : String
+    id : Int
     fullName : String
     phoneNumber : String
     address : String
-    purchaseTransactions : [PurchaseTransaction]
+    tariffPackage : TariffPackage
+    studentCustomer: StudentCustomer
+    doctorCustomer: DoctorCustomer
+    customerPropertyValues : [CustomerPropertyValue]
 }
 
-type PurchaseTransaction {
-    id : String
-    paymentType : String
-    amount : Float
+type StudentCustomer {
+    id : Int
+    universityName : String
+    studentUUID : String
 }
 
-type PurchaseTransactionProjection{
-    id : String
-    paymentType : String
+type DoctorCustomer {
+    id : Int
+    hospitalName : String
+    doctorUUID : String
+}
+
+type CustomerPropertyValue {
+    id : Int
+    value : String
+    customerProperty : CustomerProperty
+}
+
+type CustomerProperty {
+    id : Int
+    name : String
+    propertyType : String
+
 }

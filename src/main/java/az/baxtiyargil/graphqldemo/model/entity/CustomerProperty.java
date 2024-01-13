@@ -21,7 +21,7 @@ import java.io.Serializable;
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "customer_property")
+@Table(name = "customer_property", schema = "graphql")
 public class CustomerProperty implements Serializable {
 
     @Serial
