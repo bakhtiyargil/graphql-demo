@@ -1,3 +1,8 @@
+server:
+  port: 8001
+  servlet:
+    context-path: /spring-graphql
+
 spring:
   datasource:
     url: jdbc:postgresql://localhost:5432/postgres
@@ -25,3 +30,11 @@ spring:
         persistence:
           sharedCache:
             mode: NONE
+  graphql:
+    path: /tariff-package-graphql
+    schema:
+      printer:
+        enabled: true
+      locations: classpath:graphql/
+    graphiql:
+      enabled: true
