@@ -1,7 +1,7 @@
 server:
   port: 8001
   servlet:
-    context-path: /spring-graphql
+    context-path: /graphql-demo
 
 spring:
   datasource:
