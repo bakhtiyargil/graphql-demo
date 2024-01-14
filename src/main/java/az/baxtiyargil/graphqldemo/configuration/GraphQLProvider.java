@@ -1,31 +1,25 @@
 package az.baxtiyargil.graphqldemo.configuration;
 
-import az.baxtiyargil.graphqldemo.model.entity.TariffPackage;
 import az.baxtiyargil.graphqldemo.repository.TariffPackageBLZRepository;
 import com.blazebit.persistence.integration.graphql.GraphQLEntityViewSupport;
 import com.blazebit.persistence.integration.graphql.GraphQLEntityViewSupportFactory;
-import com.blazebit.persistence.integration.graphql.GraphQLRelayConnection;
 import com.blazebit.persistence.view.EntityViewManager;
-import com.blazebit.persistence.view.EntityViewSetting;
-import com.blazebit.persistence.view.Sorters;
 import graphql.GraphQL;
 import graphql.schema.GraphQLSchema;
 import graphql.schema.idl.RuntimeWiring;
 import graphql.schema.idl.SchemaGenerator;
 import graphql.schema.idl.SchemaParser;
 import graphql.schema.idl.TypeDefinitionRegistry;
-import graphql.schema.idl.TypeRuntimeWiring;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.graphql.execution.RuntimeWiringConfigurer;
 import org.springframework.stereotype.Component;
 import org.springframework.util.FileCopyUtils;
-import org.springframework.graphql.execution.RuntimeWiringConfigurer;
 
 import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.Collections;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
@@ -54,30 +48,23 @@ public class GraphQLProvider {
         graphQLEntityViewSupportFactory.setImplementRelayNode(false);
         graphQLEntityViewSupportFactory.setDefineRelayNodeIfNotExist(true);
         this.graphQLEntityViewSupport = graphQLEntityViewSupportFactory.create(typeRegistry, evm);
-        RuntimeWiring runtimeWiring = buildWiring();
+        RuntimeWiring runtimeWiring = RuntimeWiring.newRuntimeWiring().build();
         SchemaGenerator schemaGenerator = new SchemaGenerator();
         return schemaGenerator.makeExecutableSchema(typeRegistry, runtimeWiring);
-    }
-
-    private RuntimeWiring buildWiring() {
-        return RuntimeWiring.newRuntimeWiring().type(TypeRuntimeWiring.newTypeWiring("Query")
-                        .dataFetcher("findAllTariffPackages", dataFetchingEnvironment -> {
-                            EntityViewSetting<TariffPackage, ?> setting = graphQLEntityViewSupport.createPaginatedSetting(dataFetchingEnvironment);
-                            setting.addAttributeSorter("id", Sorters.ascending());
-                            if (setting.getMaxResults() == 0) {
-                                return new GraphQLRelayConnection<>(Collections.emptyList());
-                            }
-                            return new GraphQLRelayConnection<>(tariffPackageRepository.findAll(setting));
-                        })
-                        .dataFetcher("findTariffPackageById", dataFetchingEnvironment -> tariffPackageRepository.findById(graphQLEntityViewSupport.createSetting(dataFetchingEnvironment), dataFetchingEnvironment.getArgument("id")))
-                )
-                .build();
     }
 
     @Bean
     public RuntimeWiringConfigurer runtimeWiringConfigurer() {
         return wiringBuilder -> wiringBuilder
-                .type("Query", builder -> builder.dataFetcher("findTariffPackageById", dataFetchingEnvironment -> tariffPackageRepository.findById(graphQLEntityViewSupport.createSetting(dataFetchingEnvironment), dataFetchingEnvironment.getArgument("id"))))
+                .type("Query", builder -> builder.dataFetcher("findTariffPackageById",
+                        dataFetchingEnvironment -> tariffPackageRepository.findById(
+                                graphQLEntityViewSupport.createSetting(dataFetchingEnvironment),
+                                dataFetchingEnvironment.getArgument("id"))
+                ))
+                .type("Query", builder -> builder.dataFetcher("findAllTariffPackages",
+                        dataFetchingEnvironment -> tariffPackageRepository.findAll(
+                                graphQLEntityViewSupport.createSetting(dataFetchingEnvironment))
+                ))
                 .build();
     }
 
