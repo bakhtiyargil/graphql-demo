@@ -1,49 +1,26 @@
 type Query {
 
-    findAllTariffPackages  : [TariffPackage]
-    findTariffPackageById(id : String!) : TariffPackage
+    findAllTariffPackages  : [TariffPackageWithCustomerView]
+    findTariffPackageById(id : String!) : TariffPackageWithCustomerView
 
 }
 
-type TariffPackage {
+type TariffPackageView {
     id : String
     packageType : String
     commission : Float
-    customers : [Customer]
 }
 
-type Customer {
+type TariffPackageWithCustomerView {
+    id : String
+    packageType : String
+    commission : Float
+    customers : [CustomerView]
+}
+
+type CustomerView {
     id : Int
     fullName : String
     phoneNumber : String
     address : String
-    tariffPackage : TariffPackage
-    studentCustomer: StudentCustomer
-    doctorCustomer: DoctorCustomer
-    customerPropertyValues : [CustomerPropertyValue]
-}
-
-type StudentCustomer {
-    id : Int
-    universityName : String
-    studentUUID : String
-}
-
-type DoctorCustomer {
-    id : Int
-    hospitalName : String
-    doctorUUID : String
-}
-
-type CustomerPropertyValue {
-    id : Int
-    value : String
-    customerProperty : CustomerProperty
-}
-
-type CustomerProperty {
-    id : Int
-    name : String
-    propertyType : String
-
 }
