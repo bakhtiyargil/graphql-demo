@@ -1,6 +1,7 @@
 package az.baxtiyargil.graphqldemo.configuration;
 
 import az.baxtiyargil.graphqldemo.repository.TariffPackageBLZRepository;
+import az.baxtiyargil.graphqldemo.service.TariffPackageService;
 import com.blazebit.persistence.integration.graphql.GraphQLEntityViewSupport;
 import com.blazebit.persistence.integration.graphql.GraphQLEntityViewSupportFactory;
 import com.blazebit.persistence.view.EntityViewManager;
@@ -29,6 +30,7 @@ public class GraphQLProvider {
 
     private final EntityViewManager evm;
     private final TariffPackageBLZRepository tariffPackageRepository;
+    private final TariffPackageService tariffPackageService;
 
     private GraphQL graphQL;
     private GraphQLSchema schema;
@@ -65,6 +67,9 @@ public class GraphQLProvider {
                         dataFetchingEnvironment -> tariffPackageRepository.findAll(
                                 graphQLEntityViewSupport.createSetting(dataFetchingEnvironment))
                 ))
+                .type("Query", builder -> builder.dataFetcher("findCustomerWithBerry",
+                        dataFetchingEnvironment -> tariffPackageService.findTariffPackagesWithBerry(
+                                Integer.parseInt(dataFetchingEnvironment.getArgument("id")))))
                 .build();
     }
 

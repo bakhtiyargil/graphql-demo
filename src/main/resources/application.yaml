@@ -35,3 +35,8 @@ spring:
     path: /tariff-package-graphql
     graphiql:
       enabled: true
+
+application:
+  client:
+    pokemon-berry:
+      url: https://pokeapi.co/api

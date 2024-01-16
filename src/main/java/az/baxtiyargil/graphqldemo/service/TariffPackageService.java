@@ -13,6 +13,12 @@ public class TariffPackageService {
 
     private final TariffPackageRepository tariffPackageRepository;
 
+    public DataFetcher<TariffPackage> findTariffPackagesWithBerry(Integer id) {
+        return QuerydslDataFetcher.builder(tariffPackageRepository)
+                .projectAs(TariffPackage.class)
+                .single();
+    }
+
     public DataFetcher<TariffPackage> findTariffPackageById() {
         return QuerydslDataFetcher.builder(tariffPackageRepository)
                 .projectAs(TariffPackage.class)
