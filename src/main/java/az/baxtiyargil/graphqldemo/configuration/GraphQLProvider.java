@@ -1,6 +1,5 @@
 package az.baxtiyargil.graphqldemo.configuration;
 
-import az.baxtiyargil.graphqldemo.repository.TariffPackageBLZRepository;
 import az.baxtiyargil.graphqldemo.service.TariffPackageService;
 import com.blazebit.persistence.integration.graphql.GraphQLEntityViewSupport;
 import com.blazebit.persistence.integration.graphql.GraphQLEntityViewSupportFactory;
@@ -29,7 +28,6 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 public class GraphQLProvider {
 
     private final EntityViewManager evm;
-    private final TariffPackageBLZRepository tariffPackageRepository;
     private final TariffPackageService tariffPackageService;
 
     private GraphQL graphQL;
@@ -59,12 +57,12 @@ public class GraphQLProvider {
     public RuntimeWiringConfigurer runtimeWiringConfigurer() {
         return wiringBuilder -> wiringBuilder
                 .type("Query", builder -> builder.dataFetcher("findTariffPackageById",
-                        dataFetchingEnvironment -> tariffPackageRepository.findById(
+                        dataFetchingEnvironment -> tariffPackageService.findById(
                                 graphQLEntityViewSupport.createSetting(dataFetchingEnvironment),
                                 dataFetchingEnvironment.getArgument("id"))
                 ))
                 .type("Query", builder -> builder.dataFetcher("findAllTariffPackages",
-                        dataFetchingEnvironment -> tariffPackageRepository.findAll(
+                        dataFetchingEnvironment -> tariffPackageService.findAll(
                                 graphQLEntityViewSupport.createSetting(dataFetchingEnvironment))
                 ))
                 .type("Query", builder -> builder.dataFetcher("findCustomerWithBerry",
