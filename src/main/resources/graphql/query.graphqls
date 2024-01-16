@@ -2,7 +2,7 @@ type Query {
 
     findAllTariffPackages  : [TariffPackageWithCustomerView]
     findTariffPackageById(id : String!) : TariffPackageWithCustomerView
-
+    findCustomerWithBerry(id : Int!) : CustomerView
 }
 
 type TariffPackageView {
@@ -23,4 +23,15 @@ type CustomerView {
     fullName : String
     phoneNumber : String
     address : String
+    berry : BerryView
+}
+
+type BerryView {
+    id : Int
+    name : String
+    size : String
+    growthTime : String
+    maxHarvest : String
+    naturalGiftPower : String
+    soilDryness : String
 }
