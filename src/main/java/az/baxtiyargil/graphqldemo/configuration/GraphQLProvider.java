@@ -65,9 +65,9 @@ public class GraphQLProvider {
                         dataFetchingEnvironment -> tariffPackageService.findAll(
                                 graphQLEntityViewSupport.createSetting(dataFetchingEnvironment))
                 ))
-                .type("Query", builder -> builder.dataFetcher("findCustomerWithBerry",
-                        dataFetchingEnvironment -> tariffPackageService.findTariffPackagesWithBerry(
-                                Integer.parseInt(dataFetchingEnvironment.getArgument("id")))))
+                .type("Query", builder -> builder.dataFetcher("findBerries",
+                        dataFetchingEnvironment -> tariffPackageService.findBerries(
+                                dataFetchingEnvironment.getArgument("id"))))
                 .build();
     }
 

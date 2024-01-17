@@ -1,14 +1,13 @@
 package az.baxtiyargil.graphqldemo.service;
 
-import az.baxtiyargil.graphqldemo.model.entity.TariffPackage;
-import az.baxtiyargil.graphqldemo.repository.TariffPackageRepository;
+import az.baxtiyargil.graphqldemo.client.PokemonBerryClient;
+import az.baxtiyargil.graphqldemo.mapper.BerryMapper;
+import az.baxtiyargil.graphqldemo.model.view.BerryView;
 import com.blazebit.persistence.CriteriaBuilder;
 import com.blazebit.persistence.CriteriaBuilderFactory;
 import com.blazebit.persistence.view.EntityViewManager;
 import com.blazebit.persistence.view.EntityViewSetting;
-import graphql.schema.DataFetcher;
 import lombok.RequiredArgsConstructor;
-import org.springframework.graphql.data.query.QuerydslDataFetcher;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityManager;
@@ -20,13 +19,13 @@ public class TariffPackageService {
 
     private final EntityManager em;
     private final EntityViewManager evm;
+    private final BerryMapper berryMapper;
     private final CriteriaBuilderFactory cbf;
-    private final TariffPackageRepository tariffPackageRepository;
+    private final PokemonBerryClient berryClient;
 
-    public DataFetcher<TariffPackage> findTariffPackagesWithBerry(Integer id) {
-        return QuerydslDataFetcher.builder(tariffPackageRepository)
-                .projectAs(TariffPackage.class)
-                .single();
+    public BerryView findBerries(Integer id) {
+        var result = berryClient.getBerryInfo(id);
+        return berryMapper.mapToBerryView(result);
     }
 
     public <T> T findById(EntityViewSetting<T, CriteriaBuilder<T>> setting, String id) {
