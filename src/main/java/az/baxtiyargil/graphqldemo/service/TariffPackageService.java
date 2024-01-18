@@ -2,6 +2,7 @@ package az.baxtiyargil.graphqldemo.service;
 
 import az.baxtiyargil.graphqldemo.client.PokemonBerryClient;
 import az.baxtiyargil.graphqldemo.mapper.BerryMapper;
+import az.baxtiyargil.graphqldemo.model.Filter;
 import az.baxtiyargil.graphqldemo.model.view.BerryView;
 import com.blazebit.persistence.CriteriaBuilder;
 import com.blazebit.persistence.CriteriaBuilderFactory;
@@ -11,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityManager;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 @Service
@@ -36,6 +38,14 @@ public class TariffPackageService {
         return evm.applySetting(setting, cbf.create(em, evm.getMetamodel().managedView(
                         setting.getEntityViewClass()).getEntityClass()))
                 .getResultList();
+    }
+
+    public <T> List<T> search(EntityViewSetting<T, CriteriaBuilder<T>> setting, Filter filter) {
+        var criteriaBuilder = cbf.create(em, evm.getMetamodel().managedView(setting.getEntityViewClass()).getEntityClass())
+                .where(filter.getId()).eq("")
+                .where(filter.getPackageType()).eq("")
+                .where(filter.getCommission().toString()).eq("");
+        return evm.applySetting(setting, criteriaBuilder).getResultList();
     }
 
 }
