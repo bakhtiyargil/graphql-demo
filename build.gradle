@@ -28,6 +28,7 @@ dependencies {
     implementation "org.springframework.cloud:spring-cloud-starter-openfeign"
 
     implementation 'com.graphql-java-kickstart:graphql-java-tools:11.0.1'
+    implementation 'com.graphql-java:graphql-java-extended-scalars:19.0'
 
     implementation 'com.blazebit:blaze-persistence-core-api:1.6.11'
     implementation 'com.blazebit:blaze-persistence-core-impl:1.6.11'
@@ -35,13 +36,16 @@ dependencies {
     implementation 'com.blazebit:blaze-persistence-integration-spring-data-2.7:1.6.11'
     implementation 'com.blazebit:blaze-persistence-integration-hibernate-5.6:1.6.11'
 
+    implementation "org.mapstruct:mapstruct:${mapstructVersion}"
     implementation "com.querydsl:querydsl-jpa:${queryDslVersion}"
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.14.2'
 
     compileOnly 'org.projectlombok:lombok'
     runtimeOnly 'org.postgresql:postgresql'
 
     annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
     annotationProcessor 'org.projectlombok:lombok'
+    annotationProcessor "org.mapstruct:mapstruct-processor:${mapstructVersion}"
     annotationProcessor 'jakarta.persistence:jakarta.persistence-api'
     annotationProcessor 'jakarta.annotation:jakarta.annotation-api'
     annotationProcessor 'com.querydsl:querydsl-apt:5.0.0:jpa'
