@@ -96,30 +96,5 @@ public class GraphQLProvider {
         return graphQL;
     }
 
-    public static final GraphQLScalarType FILTER = GraphQLScalarType.newScalar()
-            .name("Filter")
-            .description("Custom scalar for filter data")
-            .coercing(new Coercing<Filter, Filter>() {
-
-                @SneakyThrows
-                @Override
-                public Filter serialize(@NotNull Object input) {
-                    return MAPPER.readValue(input.toString(), Filter.class);
-                }
-
-                @SneakyThrows
-                @NotNull
-                @Override
-                public Filter parseValue(@NotNull Object input) {
-                    return MAPPER.readValue(input.toString(), Filter.class);
-                }
-
-                @SneakyThrows
-                @NotNull
-                @Override
-                public Filter parseLiteral(@NotNull Object input) {
-                    return MAPPER.readValue(input.toString(), Filter.class);
-                }
-            }).build();
 
 }
