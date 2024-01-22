@@ -1,9 +1,22 @@
 package az.baxtiyargil.graphqldemo.controller;
 
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import az.baxtiyargil.graphqldemo.model.Filter;
+import az.baxtiyargil.graphqldemo.service.TariffPackageService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.graphql.data.method.annotation.Argument;
+import org.springframework.graphql.data.method.annotation.QueryMapping;
+import org.springframework.stereotype.Controller;
 
-@RestController
-@RequestMapping("/tariff-packages")
+
+@Controller
+@RequiredArgsConstructor
 public class TariffPackageController {
+
+    private final TariffPackageService tariffPackageService;
+
+    public void search(@Argument Filter filter) {
+        //
+        System.out.println("");
+    }
+
 }

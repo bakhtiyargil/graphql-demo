@@ -5,21 +5,19 @@ import az.baxtiyargil.graphqldemo.service.TariffPackageService;
 import com.blazebit.persistence.integration.graphql.GraphQLEntityViewSupport;
 import com.blazebit.persistence.integration.graphql.GraphQLEntityViewSupportFactory;
 import com.blazebit.persistence.view.EntityViewManager;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import graphql.GraphQL;
 import graphql.scalars.ExtendedScalars;
-import graphql.schema.Coercing;
-import graphql.schema.GraphQLScalarType;
 import graphql.schema.GraphQLSchema;
 import graphql.schema.idl.RuntimeWiring;
 import graphql.schema.idl.SchemaGenerator;
 import graphql.schema.idl.SchemaParser;
 import graphql.schema.idl.TypeDefinitionRegistry;
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.context.annotation.Bean;
+import org.springframework.core.MethodParameter;
+import org.springframework.core.ResolvableType;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.graphql.data.GraphQlArgumentBinder;
 import org.springframework.graphql.execution.RuntimeWiringConfigurer;
 import org.springframework.stereotype.Component;
 import org.springframework.util.FileCopyUtils;
@@ -27,6 +25,7 @@ import org.springframework.util.FileCopyUtils;
 import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.Arrays;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
@@ -36,7 +35,6 @@ public class GraphQLProvider {
 
     private final EntityViewManager evm;
     private final TariffPackageService tariffPackageService;
-    private static final ObjectMapper MAPPER = new ObjectMapper();
 
     private GraphQL graphQL;
     private GraphQLSchema schema;
@@ -56,15 +54,20 @@ public class GraphQLProvider {
         graphQLEntityViewSupportFactory.setImplementRelayNode(false);
         graphQLEntityViewSupportFactory.setDefineRelayNodeIfNotExist(true);
         this.graphQLEntityViewSupport = graphQLEntityViewSupportFactory.create(typeRegistry, evm);
-        RuntimeWiring runtimeWiring = RuntimeWiring.newRuntimeWiring()
-                .scalar(ExtendedScalars.Json)
-                .build();
+        RuntimeWiring runtimeWiring = RuntimeWiring.newRuntimeWiring().build();
         SchemaGenerator schemaGenerator = new SchemaGenerator();
         return schemaGenerator.makeExecutableSchema(typeRegistry, runtimeWiring);
     }
 
     @Bean
-    public RuntimeWiringConfigurer runtimeWiringConfigurer() {
+    public RuntimeWiringConfigurer runtimeWiringConfigurer() throws ClassNotFoundException, NoSuchMethodException {
+        var graphqlArgumentBinder = new GraphQlArgumentBinder();
+        var clazz = Class.forName("az.baxtiyargil.graphqldemo.service.TariffPackageService");
+        var method = Arrays.stream(clazz.getDeclaredMethods())
+                .filter(as -> as.getName().equals("search"))
+                .findAny().get();
+        var methodParameter = new MethodParameter(method, 1);
+
         return wiringBuilder -> wiringBuilder
                 .scalar(ExtendedScalars.Json)
                 .type("Query", builder -> builder.dataFetcher("findTariffPackageById",
@@ -82,7 +85,7 @@ public class GraphQLProvider {
                 .type("Query", builder -> builder.dataFetcher("search",
                         dataFetchingEnvironment -> tariffPackageService.search(
                                 graphQLEntityViewSupport.createSetting(dataFetchingEnvironment),
-                                dataFetchingEnvironment.getArgument("filter"))))
+                                (Filter) graphqlArgumentBinder.bind(dataFetchingEnvironment, "filter", ResolvableType.forMethodParameter(methodParameter)))))
                 .build();
     }
 
@@ -95,6 +98,5 @@ public class GraphQLProvider {
     public GraphQL graphQL() {
         return graphQL;
     }
-
 
 }
