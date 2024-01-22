@@ -1,11 +1,9 @@
-scalar JSON
-
 type Query {
 
     findAllTariffPackages  : [TariffPackageWithCustomerView]
     findTariffPackageById(id : String!) : TariffPackageWithCustomerView
     findBerries(id : Int!) : BerryView
-    search(filter : JSON) : [TariffPackageView]
+    search(filter : Filter) : [TariffPackageView]
 
 }
 
@@ -38,4 +36,10 @@ type BerryView {
     maxHarvest : String
     naturalGiftPower : String
     soilDryness : String
+}
+
+input Filter {
+    id: String
+    packageType: String
+    commission: Float
 }
