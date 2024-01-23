@@ -83,10 +83,8 @@ public class TariffPackageService {
         Class<?> clazz = filter.getClass();
         for (Field field : clazz.getDeclaredFields()) {
             field.setAccessible(true);
-
             fieldMap.put(field.getName(), field.get(filter));
         }
-
         return fieldMap;
     }
 
