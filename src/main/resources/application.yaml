@@ -47,4 +47,4 @@ blaze:
       restrictions:
         id: eq
         packageType: like
-        commission: eq
+        commission: gt

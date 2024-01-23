@@ -30,6 +30,7 @@ public class TariffPackageService {
     private final CriteriaBuilderFactory cbf;
     private final PokemonBerryClient berryClient;
     private final QueryFilterProperties queryFilterProperties;
+    private static final String PCT = "%";
 
     public BerryView findBerries(Integer id) {
         var result = berryClient.getBerryInfo(id);
@@ -67,7 +68,10 @@ public class TariffPackageService {
                 restrictionBuilder.eq(value);
                 break;
             case "like":
-                restrictionBuilder.like(false).value(value + "%").noEscape();
+                restrictionBuilder.like(false).value(value + PCT).noEscape();
+                break;
+            case "gt":
+                restrictionBuilder.gt().value(value);
                 break;
             default:
                 restrictionBuilder.eq(value);
