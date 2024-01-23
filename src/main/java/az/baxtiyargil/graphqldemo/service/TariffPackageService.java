@@ -67,7 +67,7 @@ public class TariffPackageService {
                 restrictionBuilder.eq(value);
                 break;
             case "like":
-                restrictionBuilder.like(false).value(value);
+                restrictionBuilder.like(false).value(value + "%").noEscape();
                 break;
             default:
                 restrictionBuilder.eq(value);
