@@ -40,3 +40,11 @@ application:
   client:
     pokemon-berry:
       url: https://pokeapi.co/api
+
+blaze:
+  query:
+    search:
+      restrictions:
+        id: eq
+        packageType: eq
+        commission: eq
