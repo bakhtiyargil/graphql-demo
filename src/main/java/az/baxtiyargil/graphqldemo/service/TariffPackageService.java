@@ -12,7 +12,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityManager;
-import java.util.LinkedHashMap;
 import java.util.List;
 
 @Service
@@ -42,10 +41,11 @@ public class TariffPackageService {
 
     public <T> List<T> search(EntityViewSetting<T, CriteriaBuilder<T>> setting, Filter filter) {
         var criteriaBuilder = cbf.create(em, evm.getMetamodel().managedView(setting.getEntityViewClass()).getEntityClass())
-                .where(filter.getId()).eq("")
-                .where(filter.getPackageType()).eq("")
-                .where(filter.getCommission().toString()).eq("");
-        return evm.applySetting(setting, criteriaBuilder).getResultList();
+                .where("id").eq(filter.getId())
+                .where("packageType").eq(filter.getPackageType())
+                .where("commission").eq(filter.getCommission());
+        var query = evm.applySetting(setting, criteriaBuilder);
+        return query.getResultList();
     }
 
 }

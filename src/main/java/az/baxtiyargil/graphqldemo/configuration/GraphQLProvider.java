@@ -26,6 +26,7 @@ import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Arrays;
+import java.util.Objects;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
@@ -60,14 +61,7 @@ public class GraphQLProvider {
     }
 
     @Bean
-    public RuntimeWiringConfigurer runtimeWiringConfigurer() throws ClassNotFoundException, NoSuchMethodException {
-        var graphqlArgumentBinder = new GraphQlArgumentBinder();
-        var clazz = Class.forName("az.baxtiyargil.graphqldemo.service.TariffPackageService");
-        var method = Arrays.stream(clazz.getDeclaredMethods())
-                .filter(as -> as.getName().equals("search"))
-                .findAny().get();
-        var methodParameter = new MethodParameter(method, 1);
-
+    public RuntimeWiringConfigurer runtimeWiringConfigurer() {
         return wiringBuilder -> wiringBuilder
                 .scalar(ExtendedScalars.Json)
                 .type("Query", builder -> builder.dataFetcher("findTariffPackageById",
@@ -85,7 +79,9 @@ public class GraphQLProvider {
                 .type("Query", builder -> builder.dataFetcher("search",
                         dataFetchingEnvironment -> tariffPackageService.search(
                                 graphQLEntityViewSupport.createSetting(dataFetchingEnvironment),
-                                (Filter) graphqlArgumentBinder.bind(dataFetchingEnvironment, "filter", ResolvableType.forMethodParameter(methodParameter)))))
+                                (Filter) Objects.requireNonNull(new GraphQlArgumentBinder().bind(
+                                        dataFetchingEnvironment,
+                                        "filter", ResolvableType.forMethodParameter(getMethodParameter()))))))
                 .build();
     }
 
@@ -97,6 +93,14 @@ public class GraphQLProvider {
     @Bean
     public GraphQL graphQL() {
         return graphQL;
+    }
+
+    private MethodParameter getMethodParameter() throws ClassNotFoundException {
+        var clazz = Class.forName("az.baxtiyargil.graphqldemo.service.TariffPackageService");
+        var method = Arrays.stream(clazz.getDeclaredMethods())
+                .filter(as -> as.getName().equals("search"))
+                .findAny().get();
+        return new MethodParameter(method, 1);
     }
 
 }
