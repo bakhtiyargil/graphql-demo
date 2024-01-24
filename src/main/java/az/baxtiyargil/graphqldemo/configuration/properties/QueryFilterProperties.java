@@ -1,5 +1,6 @@
 package az.baxtiyargil.graphqldemo.configuration.properties;
 
+import az.baxtiyargil.graphqldemo.model.enumeration.RestrictionType;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.experimental.FieldDefaults;
@@ -16,6 +17,6 @@ import java.util.HashMap;
 @ConfigurationProperties(prefix = "blaze.query.search")
 public class QueryFilterProperties {
 
-    final HashMap<String, String> restrictions = new HashMap<>();
+    final HashMap<String, RestrictionType> restrictions = new HashMap<>();
 
 }

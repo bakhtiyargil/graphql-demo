@@ -4,6 +4,7 @@ import az.baxtiyargil.graphqldemo.client.PokemonBerryClient;
 import az.baxtiyargil.graphqldemo.configuration.properties.QueryFilterProperties;
 import az.baxtiyargil.graphqldemo.mapper.BerryMapper;
 import az.baxtiyargil.graphqldemo.model.Filter;
+import az.baxtiyargil.graphqldemo.model.enumeration.RestrictionType;
 import az.baxtiyargil.graphqldemo.model.view.BerryView;
 import com.blazebit.persistence.CriteriaBuilder;
 import com.blazebit.persistence.CriteriaBuilderFactory;
@@ -30,7 +31,6 @@ public class TariffPackageService {
     private final CriteriaBuilderFactory cbf;
     private final PokemonBerryClient berryClient;
     private final QueryFilterProperties queryFilterProperties;
-    private static final String PCT = "%";
 
     public BerryView findBerries(Integer id) {
         var result = berryClient.getBerryInfo(id);
@@ -50,32 +50,18 @@ public class TariffPackageService {
     public <T> List<T> search(EntityViewSetting<T, CriteriaBuilder<T>> setting, Filter filter) throws IllegalAccessException {
         var criteriaBuilder = cbf.create(em, evm.getMetamodel()
                 .managedView(setting.getEntityViewClass()).getEntityClass());
-        var filterMap = filterAsMap(filter);
-        filterMap.entrySet().stream()
-                .filter(ent -> Objects.nonNull(ent.getValue()))
+        filterAsMap(filter).entrySet().stream()
+                .filter(entry -> Objects.nonNull(entry.getValue()))
                 .forEach((entry) -> {
-                    var propEntry = findMatchingProp(entry.getKey());
+                    var propEntry = findMatchingRestrictionProp(entry.getKey());
                     appendRestriction(criteriaBuilder.where(propEntry.getKey()),
                             propEntry.getValue(), entry.getValue());
                 });
-        var query = evm.applySetting(setting, criteriaBuilder);
-        return query.getResultList();
+        return evm.applySetting(setting, criteriaBuilder).getResultList();
     }
 
-    private void appendRestriction(RestrictionBuilder<?> restrictionBuilder, String restrictionType, Object value) {
-        switch (restrictionType) {
-            case "eq":
-                restrictionBuilder.eq(value);
-                break;
-            case "like":
-                restrictionBuilder.like(false).value(value + PCT).noEscape();
-                break;
-            case "gt":
-                restrictionBuilder.gt().value(value);
-                break;
-            default:
-                restrictionBuilder.eq(value);
-        }
+    private void appendRestriction(RestrictionBuilder<?> restrictionBuilder, RestrictionType restrictionType, Object value) {
+        RestrictionType.RESTRICTIONS.getOrDefault(restrictionType, RestrictionBuilder::eq).accept(restrictionBuilder, value);
     }
 
     private Map<String, Object> filterAsMap(Filter filter) throws IllegalAccessException {
@@ -88,10 +74,10 @@ public class TariffPackageService {
         return fieldMap;
     }
 
-    private Map.Entry<String, String> findMatchingProp(String key) {
+    private Map.Entry<String, RestrictionType> findMatchingRestrictionProp(String restrictionType) {
         return queryFilterProperties.getRestrictions().entrySet()
                 .stream()
-                .filter(filterKey -> filterKey.getKey().equals(key))
+                .filter(filter -> filter.getKey().equals(restrictionType))
                 .findAny()
                 .get();
     }
