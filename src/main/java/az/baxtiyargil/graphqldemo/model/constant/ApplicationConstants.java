@@ -6,5 +6,6 @@ import lombok.experimental.UtilityClass;
 public class ApplicationConstants {
 
     public static final String PCT = "%";
+    public static final String GRAPH_QUERY = "Query";
 
 }
