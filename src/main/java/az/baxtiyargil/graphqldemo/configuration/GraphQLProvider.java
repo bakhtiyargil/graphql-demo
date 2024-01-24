@@ -28,6 +28,7 @@ import java.io.InputStreamReader;
 import java.util.Arrays;
 import java.util.Objects;
 
+import static az.baxtiyargil.graphqldemo.model.constant.ApplicationConstants.GRAPH_QUERY;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 @Component
@@ -64,19 +65,19 @@ public class GraphQLProvider {
     public RuntimeWiringConfigurer runtimeWiringConfigurer() {
         return wiringBuilder -> wiringBuilder
                 .scalar(ExtendedScalars.Json)
-                .type("Query", builder -> builder.dataFetcher("findTariffPackageById",
+                .type(GRAPH_QUERY, builder -> builder.dataFetcher("findTariffPackageById",
                         dataFetchingEnvironment -> tariffPackageService.findById(
                                 graphQLEntityViewSupport.createSetting(dataFetchingEnvironment),
                                 dataFetchingEnvironment.getArgument("id"))
                 ))
-                .type("Query", builder -> builder.dataFetcher("findAllTariffPackages",
+                .type(GRAPH_QUERY, builder -> builder.dataFetcher("findAllTariffPackages",
                         dataFetchingEnvironment -> tariffPackageService.findAll(
                                 graphQLEntityViewSupport.createSetting(dataFetchingEnvironment))
                 ))
-                .type("Query", builder -> builder.dataFetcher("findBerries",
+                .type(GRAPH_QUERY, builder -> builder.dataFetcher("findBerries",
                         dataFetchingEnvironment -> tariffPackageService.findBerries(
                                 dataFetchingEnvironment.getArgument("id"))))
-                .type("Query", builder -> builder.dataFetcher("search",
+                .type(GRAPH_QUERY, builder -> builder.dataFetcher("search",
                         dataFetchingEnvironment -> tariffPackageService.search(
                                 graphQLEntityViewSupport.createSetting(dataFetchingEnvironment),
                                 (Filter) Objects.requireNonNull(new GraphQlArgumentBinder().bind(

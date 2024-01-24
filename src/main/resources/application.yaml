@@ -45,6 +45,6 @@ blaze:
   query:
     search:
       restrictions:
-        id: eq
-        packageType: like
-        commission: gt
+        id: EQUALS
+        packageType: LIKE
+        commission: GREATER_THAN
